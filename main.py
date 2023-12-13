@@ -10,18 +10,15 @@
 """
 
 import sys
-from PySide6.QtGui import Qt, QCursor
-from PySide6.QtWidgets import (
-    QApplication,
-    QSizePolicy,
-    QVBoxLayout,
-    QHBoxLayout,
-    QSpacerItem,
-    QWidget,
-    QMainWindow,
-    QPushButton,
-    QLabel,
-)
+
+from PySide6.QtGui import QCursor, Qt
+from PySide6.QtWidgets import (QApplication, QHBoxLayout, QLabel, QMainWindow,
+                               QPushButton, QSizePolicy, QSpacerItem,
+                               QVBoxLayout, QWidget)
+
+from src.controllers.board import BoardController
+from src.models.board import RawBoard
+from src.views.board import BoardView
 
 
 class MainWindow(QMainWindow):
@@ -100,6 +97,10 @@ class MainWindow(QMainWindow):
 
 if __name__ == "__main__":
     app: QApplication = QApplication(sys.argv)
-    window: MainWindow = MainWindow(QLabel("Maze Board"))
-
+    board: BoardController = BoardController(
+        RawBoard.fromData(),
+        # RawBoard.fromFile("./test/maze_1.txt"),
+        BoardView(),
+    )
+    window: MainWindow = MainWindow(board.view)
     sys.exit(app.exec())

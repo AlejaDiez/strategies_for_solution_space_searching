@@ -1,10 +1,10 @@
-from PySide6.QtWidgets import QSizePolicy, QWidget, QPushButton
+from PySide6.QtWidgets import QPushButton, QSizePolicy, QWidget
 
 from src.models.cell import Cell
 
 
 class CellView(QPushButton):
-    def __init__(self, parent: QWidget | None) -> None:
+    def __init__(self, parent: QWidget = None) -> None:
         super().__init__(parent)
 
     def init(self, cell: Cell, onClick: object) -> None:
@@ -12,8 +12,8 @@ class CellView(QPushButton):
             QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
         )
         self.setMinimumSize(60, 60)
-        self.setText(f"{cell.row}, {cell.col}")
-        self.update(cell.type, cell.step)
+        self.setText(f"[{cell.row}, {cell.col}]")
+        self.update(cell)
         self.clicked.connect(onClick)
 
     def update(self, cell: Cell) -> None:
