@@ -129,6 +129,47 @@ class RawBoard:
                         )
         return cls(board, start, end)
 
+    @classmethod
+    def toFile(cls, path: str, board: "Board") -> None:
+        file = open(path, "w")
+
+        for row in range(board.rows * 2 + 1):
+            for col in range(board.cols * 2 + 1):
+                cell: CellController = board.getCell(row // 2, col // 2)
+
+                if row % 2 != 0 and col % 2 != 0:  # Cell
+                    file.write(" ")
+                elif row % 2 != 0 and col % 2 == 0:  # Vertical wall
+                    if col == board.cols * 2:
+                        if cell.walls.right.activated:
+                            file.write("|")
+                        else:
+                            file.write(" ")
+                    else:
+                        if cell.walls.left.activated:
+                            file.write("|")
+                        else:
+                            file.write(" ")
+                elif row % 2 == 0 and col % 2 != 0:  # Horizontal wall
+                    if row == board.rows * 2:
+                        if cell.walls.down.activated:
+                            file.write("-")
+                        else:
+                            file.write(" ")
+                    else:
+                        if cell.walls.up.activated:
+                            file.write("-")
+                        else:
+                            file.write(" ")
+                else:  # Corner
+                    file.write(" ")
+            file.write("\n")
+        if board.start != None:
+            file.write(f"{board.start.row},{board.start.col}\n")
+        if board.end != None:
+            file.write(f"{board.end.row},{board.end.col}\n")
+        file.close()
+
     @property
     def rows(self) -> int:
         return len(self.board)
