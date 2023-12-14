@@ -164,7 +164,7 @@ class Board:
                 left: WallController = (
                     WallController(
                         Wall(Wall.Orientation.VERTICAL, cell[0], True),
-                        WallView(controller.view),
+                        WallView(),
                         controller.toggleWall,
                     )
                     if col == 0
@@ -173,7 +173,7 @@ class Board:
                 top: WallController = (
                     WallController(
                         Wall(Wall.Orientation.HORIZONTAL, cell[1], True),
-                        WallView(controller.view),
+                        WallView(),
                         controller.toggleWall,
                     )
                     if row == 0
@@ -181,12 +181,12 @@ class Board:
                 )
                 right: WallController = WallController(
                     Wall(Wall.Orientation.VERTICAL, cell[2], col == self.cols - 1),
-                    WallView(controller.view),
+                    WallView(),
                     controller.toggleWall,
                 )
                 bottom: WallController = WallController(
                     Wall(Wall.Orientation.HORIZONTAL, cell[3], row == self.rows - 1),
-                    WallView(controller.view),
+                    WallView(),
                     controller.toggleWall,
                 )
                 walls: WallController.Group = WallController.Group(
@@ -202,7 +202,7 @@ class Board:
                             Cell.Type.START,
                             walls,
                         ),
-                        CellView(controller.view),
+                        CellView(),
                         controller.toggleCell,
                     )
                     self.start = cell
@@ -214,7 +214,7 @@ class Board:
                             Cell.Type.END,
                             walls,
                         ),
-                        CellView(controller.view),
+                        CellView(),
                         controller.toggleCell,
                     )
                     self.end = cell
@@ -226,7 +226,7 @@ class Board:
                             Cell.Type.DEFAULT,
                             walls,
                         ),
-                        CellView(controller.view),
+                        CellView(),
                         controller.toggleCell,
                     )
                 self.board[row].append(cell)

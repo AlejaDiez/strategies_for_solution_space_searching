@@ -4,8 +4,8 @@ from src.models.cell import Cell
 
 
 class CellView(QPushButton):
-    def __init__(self, parent: QWidget = None) -> None:
-        super().__init__(parent)
+    def __init__(self) -> None:
+        super().__init__()
 
     def init(self, cell: Cell, onClick: object) -> None:
         self.setSizePolicy(

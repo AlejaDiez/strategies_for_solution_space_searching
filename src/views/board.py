@@ -7,8 +7,8 @@ from src.views.wall import WallView
 
 
 class BoardView(QFrame):
-    def __init__(self, parent: QWidget = None) -> None:
-        super().__init__(parent)
+    def __init__(self) -> None:
+        super().__init__()
 
         layout: QGridLayout = QGridLayout()
 
@@ -46,7 +46,7 @@ class BoardView(QFrame):
                     else:
                         self.layout().addWidget(cell.walls.up.view, row, col)
                 else:  # Corner
-                    self.layout().addWidget(SpaceView(cell.view.parent()), row, col)
+                    self.layout().addWidget(SpaceView(), row, col)
         self.spaces(board)
 
     def spaces(self, board: Board) -> None:

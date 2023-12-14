@@ -4,10 +4,10 @@ from src.models.wall import Wall
 
 
 class WallView(QPushButton):
-    def __init__(self, parent: QWidget = None) -> None:
+    def __init__(self) -> None:
         self.__wall: Wall = None
 
-        super().__init__(parent)
+        super().__init__()
 
     def init(self, wall: Wall, onClick: object) -> None:
         self.__wall = wall

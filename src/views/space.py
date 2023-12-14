@@ -2,8 +2,8 @@ from PySide6.QtWidgets import QFrame, QSizePolicy, QWidget
 
 
 class SpaceView(QFrame):
-    def __init__(self, parent: QWidget = None) -> None:
-        super().__init__(parent)
+    def __init__(self) -> None:
+        super().__init__()
 
         self.setFixedSize(12, 12)
         self.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
