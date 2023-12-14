@@ -12,9 +12,16 @@
 import sys
 
 from PySide6.QtGui import QCursor, Qt
-from PySide6.QtWidgets import (QApplication, QHBoxLayout, QLabel, QMainWindow,
-                               QPushButton, QSizePolicy, QSpacerItem,
-                               QVBoxLayout, QWidget)
+from PySide6.QtWidgets import (
+    QApplication,
+    QHBoxLayout,
+    QMainWindow,
+    QPushButton,
+    QSizePolicy,
+    QSpacerItem,
+    QVBoxLayout,
+    QWidget,
+)
 
 from src.controllers.board import BoardController
 from src.models.board import RawBoard
@@ -22,7 +29,9 @@ from src.views.board import BoardView
 
 
 class MainWindow(QMainWindow):
-    def __init__(self, child: QWidget) -> None:
+    def __init__(self, board: BoardController) -> None:
+        self.__board: BoardController = board
+
         super().__init__()
 
         self.__widget: QWidget = QWidget(self)
@@ -39,7 +48,7 @@ class MainWindow(QMainWindow):
         layout.setAlignment(Qt.AlignmentFlag.AlignTop | Qt.AlignmentFlag.AlignLeft)
         # Add widgets to layout
         layout.addWidget(self.__toolbar())
-        layout.addWidget(child)
+        layout.addWidget(self.__board.view)
         # Show window
         self.show()
 
@@ -59,17 +68,17 @@ class MainWindow(QMainWindow):
         # Open button
         open.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
         open.setShortcut("Ctrl+O")
-        open.clicked.connect(lambda: print("Open"))
+        open.clicked.connect(self.__board.open)
         layout.addWidget(open)
         # Reset button
         reset.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
         reset.setShortcut("Ctrl+R")
-        reset.clicked.connect(lambda: print("Reset"))
+        reset.clicked.connect(self.__board.reset)
         layout.addWidget(reset)
         # Save button
         save.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
         save.setShortcut("Ctrl+S")
-        save.clicked.connect(lambda: print("Save"))
+        save.clicked.connect(self.__board.save)
         layout.addWidget(save)
         # Spacer
         layout.addSpacerItem(
@@ -79,18 +88,18 @@ class MainWindow(QMainWindow):
         solveDFS.setDefault(True)
         solveDFS.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
         solveDFS.setShortcut("Ctrl+D")
-        solveDFS.clicked.connect(lambda: print("Solve DFS"))
+        solveDFS.clicked.connect(self.__board.solveDFS)
         layout.addWidget(solveDFS)
         # Comparison button
         comparison.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
         comparison.setShortcut("Ctrl+V")
-        comparison.clicked.connect(lambda: print("vs"))
+        comparison.clicked.connect(self.__board.comparison)
         layout.addWidget(comparison)
         # Solve BFS button
         solveBFS.setDefault(True)
         solveBFS.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
         solveBFS.setShortcut("Ctrl+B")
-        solveBFS.clicked.connect(lambda: print("Solve BFS"))
+        solveBFS.clicked.connect(self.__board.solveBFS)
         layout.addWidget(solveBFS)
         return toolbar
 
@@ -102,5 +111,6 @@ if __name__ == "__main__":
         # RawBoard.fromFile("./test/maze_1.txt"),
         BoardView(),
     )
-    window: MainWindow = MainWindow(board.view)
+    window: MainWindow = MainWindow(board)
+
     sys.exit(app.exec())
