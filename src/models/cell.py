@@ -19,4 +19,4 @@ class Cell:
         self.col: int = col
         self.type: Cell.Type = type
         self.walls: WallController.Group = walls
-        self.step: int = None
+        self.step: int = 0

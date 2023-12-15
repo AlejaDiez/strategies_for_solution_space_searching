@@ -108,7 +108,6 @@ if __name__ == "__main__":
     app: QApplication = QApplication(sys.argv)
     board: BoardController = BoardController(
         RawBoard.fromData(),
-        # RawBoard.fromFile("./test/maze_1.txt"),
         BoardView(),
     )
     window: MainWindow = MainWindow(board)

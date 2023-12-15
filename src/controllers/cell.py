@@ -24,7 +24,18 @@ class CellController:
 
     @type.setter
     def type(self, type: Cell.Type) -> None:
-        self.__model.type = type
+        if (
+            type == Cell.Type.START
+            or type == Cell.Type.END
+            or type == Cell.Type.DEFAULT
+        ):
+            self.__model.type = type
+        else:
+            if (
+                self.__model.type != Cell.Type.START
+                and self.__model.type != Cell.Type.END
+            ):
+                self.__model.type = type
         self.__view.update(self.__model)
 
     @property
@@ -37,10 +48,12 @@ class CellController:
 
     @step.setter
     def step(self, step: int) -> None:
-        if step != None:
-            self.__model.type = Cell.Type.VISITED
-        self.__model.step = step
-        self.__view.update(self.__model)
+        if step == None:
+            self.__model.step = 0
+        else:
+            self.__model.step = step
+        if self.__model.step > 0:
+            self.type = Cell.Type.VISITED
 
     @property
     def view(self) -> CellView:

@@ -1,4 +1,9 @@
 import re
+from enum import Enum
+from time import sleep, time
+
+from PySide6.QtCore import QCoreApplication
+from PySide6.QtWidgets import QMessageBox
 
 from src.controllers.cell import CellController
 from src.controllers.wall import WallController
@@ -180,6 +185,10 @@ class RawBoard:
 
 
 class Board:
+    class Algorithm(Enum):
+        DFS = "Depth-First Search"
+        BFS = "Breadth-First Search"
+
     def __init__(self) -> None:
         self.rows: int
         self.cols: int
@@ -191,11 +200,11 @@ class Board:
         from src.controllers.board import BoardController
 
         controller: BoardController = controller
-        self.rows: int = board.rows
-        self.cols: int = board.cols
-        self.board: list[list[CellController]] = []
-        self.start: CellController = None
-        self.end: CellController = None
+        self.rows = board.rows
+        self.cols = board.cols
+        self.board = []
+        self.start = None
+        self.end = None
 
         for row in range(self.rows):
             self.board.append([])
@@ -288,15 +297,113 @@ class Board:
         else:
             return self.board[row][col]
 
-    def getNeighbors(self, row: int, col: int) -> list[CellController]:
+    def getNeighbors(
+        self, row: int, col: int, reverse: bool = False
+    ) -> list[CellController]:
+        cell: CellController = self.getCell(row, col)
         neighbors: list[CellController] = []
 
-        if row > 0:  # Top
+        if row > 0 and not cell.walls.up.activated:  # Up
             neighbors.append(self.getCell(row - 1, col))
-        if col > 0:  # Left
+        if col > 0 and not cell.walls.left.activated:  # Left
             neighbors.append(self.getCell(row, col - 1))
-        if row < self.rows - 1:  # Bottom
+        if row < self.rows - 1 and not cell.walls.down.activated:  # Down
             neighbors.append(self.getCell(row + 1, col))
-        if col < self.cols - 1:  # Right
+        if col < self.cols - 1 and not cell.walls.right.activated:  # Right
             neighbors.append(self.getCell(row, col + 1))
+        if reverse:
+            neighbors.reverse()
         return neighbors
+
+    def clean(self) -> None:
+        for row in range(self.rows):
+            for col in range(self.cols):
+                cell: CellController = self.getCell(row, col)
+
+                cell.step = 0
+                match cell.type:
+                    case Cell.Type.START:
+                        cell.type = Cell.Type.START
+                    case Cell.Type.END:
+                        cell.type = Cell.Type.END
+                    case _:
+                        cell.type = Cell.Type.DEFAULT
+
+    def solve(self, algorithm: Algorithm, wait: float = 0.4) -> float:
+        start: float = 0.0
+        end: float = 0.0
+        dataStructure: list[CellController] = [self.start]
+        visited: list[CellController] = []
+        self.path: list[CellController] = [self.end]
+
+        # Reset cells styles
+        self.clean()
+
+        # Set start time
+        start = time()
+
+        # Explore the maze
+        while len(dataStructure) > 0:
+            current: CellController
+            neighbors: list[CellController]
+
+            match algorithm:
+                case Board.Algorithm.DFS:  # Use as stack
+                    current = dataStructure.pop(-1)
+                    neighbors = self.getNeighbors(current.row, current.col, True)
+                case Board.Algorithm.BFS:  # Use as queue
+                    current = dataStructure.pop(0)
+                    neighbors = self.getNeighbors(current.row, current.col)
+            if current not in visited:
+                visited.append(current)
+                current.step = len(visited)
+                for neighbor in neighbors:
+                    if neighbor not in visited:
+                        dataStructure.append(neighbor)
+                        if wait != None:
+                            neighbor.type = Cell.Type.PENDING_VISIT
+                if wait != None:
+                    sleep(wait)
+            if wait != None:
+                QCoreApplication.processEvents()
+
+        # Solve the maze
+        while self.start not in self.path:
+            current: CellController = self.path[-1]
+            neighbors: list[CellController] = self.getNeighbors(
+                current.row, current.col
+            )
+
+            if wait != None:
+                current.type = Cell.Type.PATH
+            # Sort the neighbors by step
+            neighbors.sort(key=lambda neighbor: neighbor.step)
+            # Add the neighbor with the lowest step
+            if len(neighbors) > 0 and neighbors[0].step < current.step:
+                self.path.append(neighbors[0])
+                if wait != None:
+                    sleep(wait / 2)
+                    QCoreApplication.processEvents()
+            else:
+                break
+
+        # Set end time
+        end = time()
+
+        # Check if the maze has been solved successfully
+        if wait != None:
+            if self.start in self.path:
+                QMessageBox(
+                    QMessageBox.Icon.Information,
+                    "Maze Solved",
+                    "The maze has been solved successfully.",
+                ).exec()
+            else:
+                QMessageBox(
+                    QMessageBox.Icon.Critical,
+                    "Maze Not Solved",
+                    "The maze has not been solved successfully.",
+                ).exec()
+
+        # Return the time taken to solve the maze
+        return (end - start) * 1000
