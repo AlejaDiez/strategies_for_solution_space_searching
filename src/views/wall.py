@@ -5,12 +5,12 @@ from src.models.wall import Wall
 
 class WallView(QPushButton):
     def __init__(self) -> None:
-        self.__wall: Wall = None
+        self.__activated: bool
 
         super().__init__()
 
     def init(self, wall: Wall, onClick: object) -> None:
-        self.__wall = wall
+        self.__activated = wall.activated
         match wall.orientation:
             case Wall.Orientation.HORIZONTAL:
                 self.setFixedHeight(12)
@@ -26,7 +26,7 @@ class WallView(QPushButton):
         self.clicked.connect(onClick)
 
     def update(self, wall: Wall) -> None:
-        self.__wall = wall
+        self.__activated = wall.activated
         self.setStyleSheet("border: none;")
         if wall.activated:
             self.setStyleSheet("background-color: #000000;" + self.styleSheet())
@@ -36,4 +36,4 @@ class WallView(QPushButton):
 
     @property
     def activated(self) -> bool:
-        return self.__wall.activated
+        return self.__activated

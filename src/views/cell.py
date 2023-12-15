@@ -17,8 +17,7 @@ class CellView(QPushButton):
         self.clicked.connect(onClick)
 
     def update(self, cell: Cell) -> None:
-        if cell.step != None:
-            self.setText(str(cell.step))
+        self.setText(f"[{cell.row}, {cell.col}]")
         self.setStyleSheet("border: none;")
         match cell.type:
             case Cell.Type.DEFAULT:
@@ -26,10 +25,12 @@ class CellView(QPushButton):
                     "background-color: #ffffff;" + "color: #000000;" + self.styleSheet()
                 )
             case Cell.Type.START:
+                self.setText("A")
                 self.setStyleSheet(
                     "background-color: #0072c3;" + "color: #ffffff;" + self.styleSheet()
                 )
             case Cell.Type.END:
+                self.setText("B")
                 self.setStyleSheet(
                     "background-color: #da1e28;" + "color: #ffffff;" + self.styleSheet()
                 )
@@ -38,6 +39,7 @@ class CellView(QPushButton):
                     "background-color: #198038;" + "color: #ffffff;" + self.styleSheet()
                 )
             case Cell.Type.VISITED:
+                self.setText(str(cell.step))
                 self.setStyleSheet(
                     "background-color: #6fdc8c;" + "color: #000000;" + self.styleSheet()
                 )
