@@ -329,12 +329,12 @@ class Board:
                     case _:
                         cell.type = Cell.Type.DEFAULT
 
-    def solve(self, algorithm: Algorithm, wait: float = 0.4) -> float:
+    def solve(self, algorithm: Algorithm, wait: float = 0.4) -> tuple[float, int]:
         start: float = 0.0
         end: float = 0.0
         dataStructure: list[CellController] = [self.start]
         visited: list[CellController] = []
-        self.path: list[CellController] = [self.end]
+        path: list[CellController] = [self.end]
 
         # Reset cells styles
         self.clean()
@@ -368,8 +368,8 @@ class Board:
                 QCoreApplication.processEvents()
 
         # Solve the maze
-        while self.start not in self.path:
-            current: CellController = self.path[-1]
+        while self.start not in path:
+            current: CellController = path[-1]
             neighbors: list[CellController] = self.getNeighbors(
                 current.row, current.col
             )
@@ -380,7 +380,7 @@ class Board:
             neighbors.sort(key=lambda neighbor: neighbor.step)
             # Add the neighbor with the lowest step
             if len(neighbors) > 0 and neighbors[0].step < current.step:
-                self.path.append(neighbors[0])
+                path.append(neighbors[0])
                 if wait != None:
                     sleep(wait / 2)
                     QCoreApplication.processEvents()
@@ -392,7 +392,7 @@ class Board:
 
         # Check if the maze has been solved successfully
         if wait != None:
-            if self.start in self.path:
+            if self.start in path:
                 QMessageBox(
                     QMessageBox.Icon.Information,
                     "Maze Solved",
@@ -406,4 +406,4 @@ class Board:
                 ).exec()
 
         # Return the time taken to solve the maze
-        return (end - start) * 1000
+        return ((end - start) * 1000, len(path))

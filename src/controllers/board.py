@@ -1,8 +1,15 @@
 from enum import Enum
 
 from PySide6.QtCore import Qt
-from PySide6.QtWidgets import (QDialog, QFileDialog, QGridLayout, QLabel,
-                               QMessageBox, QPushButton, QSpinBox)
+from PySide6.QtWidgets import (
+    QDialog,
+    QFileDialog,
+    QGridLayout,
+    QLabel,
+    QMessageBox,
+    QPushButton,
+    QSpinBox,
+)
 
 from src.controllers.cell import CellController
 from src.controllers.wall import WallController
@@ -141,16 +148,16 @@ class BoardController:
         ):
             self.__state = BoardController.__BoardState.SOLVING
             # Solve both algorithms
-            dfsTime = self.__model.solve(Board.Algorithm.DFS, None)
-            bfsTime = self.__model.solve(Board.Algorithm.BFS, None)
+            dfs = self.__model.solve(Board.Algorithm.DFS, None)
+            bfs = self.__model.solve(Board.Algorithm.BFS, None)
             # Clean board
             self.__model.clean()
             self.__state = BoardController.__BoardState.IDLE
             # Show results
             QMessageBox(
-                QMessageBox.Icon.Critical,
+                QMessageBox.Icon.Information,
                 "DFS vs BFS",
-                f"DFS: {dfsTime:.3f}ms\nBFS: {bfsTime:.3f}ms\n",
+                f"DFS: {dfs[0]:.3f} ms - {dfs[1]} cells\nBFS: {bfs[0]:.3f} ms - {bfs[1]} cells",
             ).exec()
 
     @property
