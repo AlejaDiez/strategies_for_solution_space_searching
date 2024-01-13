@@ -78,60 +78,60 @@ class RawBoard:
                 if re.match(r"^[\s\-\|]+$", line)
             ]
             # Parse board
-        rows: int = int((len(lines) - 1) / 2)
-        cols: int = lines[0].count("-")
-        board = [
-            [(False, False, False, False) for _ in range(cols)] for _ in range(rows)
-        ]
-        for y in range(rows * 2 + 1):
-            for x in range(cols * 2 + 1):
-                a: int = x // 2
-                b: int = y // 2
+            rows: int = int((len(lines) - 1) / 2)
+            cols: int = lines[0].count("-")
+            board = [
+                [(False, False, False, False) for _ in range(cols)] for _ in range(rows)
+            ]
+            for y in range(rows * 2 + 1):
+                for x in range(cols * 2 + 1):
+                    a: int = x // 2
+                    b: int = y // 2
 
-                if y % 2 == 0 and x % 2 != 0:  # Horizontal walls
-                    if b >= 0 and b <= rows - 1:
-                        board[b][a] = (
-                            board[b][a][0],
-                            True if lines[y][x] == "-" else False,
-                            board[b][a][2],
-                            board[b][a][3],
-                        )
-                        if b > 0:
+                    if y % 2 == 0 and x % 2 != 0:  # Horizontal walls
+                        if b >= 0 and b <= rows - 1:
+                            board[b][a] = (
+                                board[b][a][0],
+                                True if lines[y][x] == "-" else False,
+                                board[b][a][2],
+                                board[b][a][3],
+                            )
+                            if b > 0:
+                                board[b - 1][a] = (
+                                    board[b - 1][a][0],
+                                    board[b - 1][a][1],
+                                    board[b - 1][a][2],
+                                    True if lines[y][x] == "-" else False,
+                                )
+                        else:
                             board[b - 1][a] = (
                                 board[b - 1][a][0],
                                 board[b - 1][a][1],
                                 board[b - 1][a][2],
                                 True if lines[y][x] == "-" else False,
                             )
-                    else:
-                        board[b - 1][a] = (
-                            board[b - 1][a][0],
-                            board[b - 1][a][1],
-                            board[b - 1][a][2],
-                            True if lines[y][x] == "-" else False,
-                        )
-                elif y % 2 != 0 and x % 2 == 0:  # Vertical walls
-                    if a >= 0 and a <= cols - 1:
-                        board[b][a] = (
-                            True if lines[y][x] == "|" else False,
-                            board[b][a][1],
-                            board[b][a][2],
-                            board[b][a][3],
-                        )
-                        if a > 0:
+                    elif y % 2 != 0 and x % 2 == 0:  # Vertical walls
+                        if a >= 0 and a <= cols - 1:
+                            board[b][a] = (
+                                True if lines[y][x] == "|" else False,
+                                board[b][a][1],
+                                board[b][a][2],
+                                board[b][a][3],
+                            )
+                            if a > 0:
+                                board[b][a - 1] = (
+                                    board[b][a - 1][0],
+                                    board[b][a - 1][1],
+                                    True if lines[y][x] == "|" else False,
+                                    board[b][a - 1][3],
+                                )
+                        else:
                             board[b][a - 1] = (
                                 board[b][a - 1][0],
                                 board[b][a - 1][1],
                                 True if lines[y][x] == "|" else False,
                                 board[b][a - 1][3],
                             )
-                    else:
-                        board[b][a - 1] = (
-                            board[b][a - 1][0],
-                            board[b][a - 1][1],
-                            True if lines[y][x] == "|" else False,
-                            board[b][a - 1][3],
-                        )
         return cls(board, start, end)
 
     @classmethod
